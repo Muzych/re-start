@@ -151,6 +151,12 @@
             backend === 'microsoft-todo' &&
             (previousMicrosoftClientId !== microsoftClientId ||
                 previousMicrosoftTenant !== microsoftTenant)
+
+        if (microsoftConfigChanged && settings.microsoftTodoSignedIn) {
+            // Microsoft client configuration changed, so require re-auth.
+            // Reset the signed-in flag to avoid misleading "authentication expired" errors.
+            settings.microsoftTodoSignedIn = false
+        }
         const clearLocalData =
             tokenChanged || backendChanged || microsoftConfigChanged
 

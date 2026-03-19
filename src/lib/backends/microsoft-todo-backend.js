@@ -255,9 +255,12 @@ class MicrosoftTodoBackend extends TaskBackend {
         })
 
         if (!response.ok) {
+            // Clear all local auth state so the UI treats this as an expired sign-in.
+            this.accessToken = null
+            this.accessTokenExpiresAt = null
             this.refreshToken = null
             localStorage.removeItem(this.refreshTokenKey)
-            throw new Error(`Microsoft token refresh failed: ${response.status}`)
+            throw new Error('Authentication expired. Please sign in again.')
         }
 
         const tokenData = await response.json()

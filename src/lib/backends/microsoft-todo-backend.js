@@ -414,7 +414,11 @@ class MicrosoftTodoBackend extends TaskBackend {
             .filter((task) => {
                 if (task.status !== 'completed') return true
                 if (!task.completedDateTime?.dateTime) return false
-                const completedAt = new Date(`${task.completedDateTime.dateTime}Z`)
+                const dateTimeStr = task.completedDateTime.dateTime
+                const hasTimezone =
+                    /Z$/.test(dateTimeStr) || /[+-]\d{2}:\d{2}$/.test(dateTimeStr)
+                const isoString = hasTimezone ? dateTimeStr : `${dateTimeStr}Z`
+                const completedAt = new Date(isoString)
                 return completedAt > recentThreshold
             })
             .map((task) =>
